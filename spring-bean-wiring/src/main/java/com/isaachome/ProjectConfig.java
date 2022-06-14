@@ -12,12 +12,21 @@ public class ProjectConfig {
 		parrot.setName("Miki");
 		return parrot;
 	}
-	
+
+	/*
 	@Bean
 	public Person person() {
 		var person = new Person();
 		person.setName("John ");
 		person.setParrot(parrot());
+		return person;
+	}
+	*/
+	@Bean
+	public Person person(Parrot parrot) {
+		var person = new Person();
+		person.setName("John ");
+		person.setParrot(parrot);
 		return person;
 	}
 
