@@ -13,6 +13,6 @@ public class MainApp {
 		Comment comment = new Comment();
 		comment.setText("Wow powerful AOP"); 
 		comment.setAuthor("Natasha");
-		service.updateComment(comment);
+		service.editingComment(comment);
 	}
 }

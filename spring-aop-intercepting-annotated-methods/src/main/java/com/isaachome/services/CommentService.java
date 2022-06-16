@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.springframework.stereotype.Service;
 
+import com.isaachome.aop.ToLog;
 import com.isaachome.model.Comment;
 
 @Service
@@ -14,8 +15,11 @@ public class CommentService {
 		logger.info("Publishing comment : " + comment.getText());
 	}
 	
-	public String updateComment(Comment comment) {
-		logger.info("Updating comment : " + comment.getText());
-		return "SUCCESS";
+	@ToLog
+	public void deleteComment(Comment comment) {
+		logger.info("Deleting comment : " + comment.getText());
+	}
+	public void editingComment(Comment comment) {
+		logger.info("Editing comment : " + comment.getText());
 	}
 }

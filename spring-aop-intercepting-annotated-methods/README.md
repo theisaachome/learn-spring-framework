@@ -62,7 +62,7 @@ So, the bean becomes the target object of the aspect.
 
 Example
 
-<img src="./images/aspect-term.png" alt="drawing" width="750"/>
+<img src="./images/aspect-term.png" alt="drawing" width="400"/>
 
 ---
 
@@ -87,7 +87,7 @@ This approach is named `weaving`.
 
 Weaving an aspect. Instead of giving you a reference to the real bean, Spring gives you a reference to a proxy object, intercepts the method calls, and manages the aspect logic.
 
-<img src="./images/aspect-proxy.png" alt="drawing" width="750"/>
+<img src="./images/aspect-proxy.png" alt="drawing" width="400"/>
 
 ---
 
@@ -111,10 +111,9 @@ for implementing a functionality to log all the events where a use case begins a
 
 ## Implementing a simple aspect
 
-Create a new project and add the spring- context dependency and the spring-aspects dependency.
+Create a new project and add  the spring- context dependency and the spring-aspects dependency.
 
 Make sure to update your pom.xml file and add the needed dependencies, as presented in the next code snippet:
-
 ```xml
 <dependency>
    <groupId>org.springframework</groupId>
@@ -128,11 +127,9 @@ Make sure to update your pom.xml file and add the needed dependencies, as presen
 <version>5.2.8.RELEASE</version>
 </dependency>
 ```
-
 Example App
 
 ### Model
-
 ```java
 @Data
 public class Comment {
@@ -142,7 +139,6 @@ public class Comment {
 ```
 
 ### Service
-
 - We use the stereotype annotation to make this a bean in the Spring context.
 - To log a message in the app’s console every time someone calls the use case, we use a logger object.
 - This method defines the use case for our demonstration.
@@ -156,9 +152,7 @@ public class CommentService {
 	}
 }
 ```
-
 ### Configuration
-
 - We use `@ComponentScan` to tell Spring where to search for classes annotated with stereotype annotations.
 
 ```java
@@ -167,46 +161,45 @@ public class CommentService {
 public class ProjectConfig {}
 ```
 
-### Main Class
 
+### Main Class
 - Gets the CommentService bean from the context
-- Creates a Comment instance to give as a parameter to the publishComment() method
+- Creates a Comment instance to give as a parameter to the publishComment() method 
 - Calls the publishComment() method
 
 ```java
 var context = new AnnotationConfigApplicationContext(ProjectConfig.class);
 var service = context.getBean(CommentService.class);
 Comment comment = new Comment();
-comment.setText("Demo comment");
+comment.setText("Demo comment"); 
 comment.setAuthor("Natasha");
 service.pushComment(comment);
 ```
 
 Now enhance the project with an aspect class that intercepts the method call and adds an output before and after the call.
 
-### To create an aspect, you follow these steps:
 
+### To create an aspect, you follow these steps:
 1. Enable the aspect mechanism in your Spring app by annotating the configuration class
-   with the @EnableAspectJAutoProxy annotation.
+with the @EnableAspectJAutoProxy annotation.
 2. Create a new class, and annotate it with the @Aspect annotation. Using either @Bean or stereotype annotations, add a bean for this class in the Spring context.
 3. Define a method that will implement the aspect logic and tell Spring when and which methods to intercept using an advice annotation.
 4. Implement the aspect logic.
 
-<img src="./images/aspect-example.png" alt="drawing" width="750"/>
+
+<img src="./images/aspect-example.png" alt="drawing" width="600"/>
 
 ---
 
 STEP 1: ENABLING THE ASPECTS MECHANISM FOR YOUR APPLICATION
 
 Use the @EnableAspectJAutoProxy annotation to enable the aspect capabilities.
-
 ```java
 @Configuration
 @ComponentScan(basePackages = "com.isaachome.service")
 @EnableAspectJAutoProxy
 public class ProjectConfig {}
 ```
-
 STEP 2: CREATE A CLASS THAT DEFINES THE ASPECT, AND ADD AN INSTANCE FOR THIS CLASS IN THE SPRING CONTEXT
 
 ```java
@@ -230,38 +223,39 @@ Using an advice annotation to weave the aspect to specific methods
 ```java
 @Aspect
 public class LogginAspect {
-
+	
     @Around("execution(* services.*.*(..))")
 	public void log(ProceedingJoinPoint joinPoint) {
 		joinPoint.proceed();
 	}
 }
 ```
-
 - Defines which are the intercepted methods
 - Delegates to the actual intercepted method
 
-## @Around
+## @Around 
 
 `@Around` annotation tells Spring which method calls to intercept.
 
+
 ### Look at the expression
 
-<img src="./images/aspect-expression.png" alt="drawing" width="750"/>
+<img src="./images/aspect-expression.png" alt="drawing" width="600"/>
 
----
+
+--- 
+
 
 STEP 4: IMPLEMENT THE ASPECT LOGIC
 In listing 6.6, I’ve added the logic for our aspect. Now the aspect
-
 1. Intercepts the method
 2. Displays something in the console before calling the intercepted method 3. Calls the intercepted method
-3. Displays something in the console after calling the intercepted method
+4. Displays something in the console after calling the intercepted method
 
 ```java
 @Aspect
 public class LogginAspect {
-
+	
 	private Logger logger = Logger.getLogger(LogginAspect.class.getName());
 	@Around("execution(* services.*.*(..))")
 	public void log(ProceedingJoinPoint joinPoint) throws Throwable {
@@ -272,29 +266,29 @@ public class LogginAspect {
 }
 
 ```
-
 - Prints a message in the console before the intercepted method’s execution
 - Calls the intercepted method
 - Prints a message in the console after the intercepted method’s execution
 
 ---
 
-### Altering the intercepted method’s parameters and the returned value
+###  Altering the intercepted method’s parameters and the returned value
 
 `Aspects` are really powerful.They intercept a method and alter its execution.
 
 They can also intercept the parameters used to call the method and possibly alter them or the value the intercepted method returns.
 
+
 Log the parameters used to call the service method and what the method returned.
 
-For demonstration, the method now returns a value.
+For  demonstration, the method now returns a value.
 
 ```java
 
 @Service
 public class CommentService {
 	private Logger logger = Logger.getLogger(CommentService.class.getName());
-
+	
 	public String updateComment(Comment comment) {
 		logger.info("Updating comment : " + comment.getText());
 		return "SUCCESS";
@@ -314,24 +308,24 @@ String methodName = joinPoint.getSignature().getName();
 Object [] arguments = joinPoint.getArgs();
 ```
 
-### Obtaining the method name and parameters in the aspect logic
 
+### Obtaining the method name and parameters in the aspect logic
 ```java
 @Aspect
 public class LogginAspect {
-
+	
 	private Logger logger = Logger.getLogger(LogginAspect.class.getName());
 	@Around("execution(* com.isaachome.services.*.*(..))")
 	public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
 		String methodName = joinPoint.getSignature().getName();
 		Object [] arguments = joinPoint.getArgs();
-
-		logger.info("Method " + methodName +
+		
+		logger.info("Method " + methodName + 
 				" with parameters " + Arrays.asList(arguments)
 				+ " will execute.");
-
+		
 		Object returnByMethod =joinPoint.proceed();
-
+		
 		logger.info("Method  executed and returned " + returnByMethod);
 		return returnByMethod;
 	}
@@ -339,146 +333,28 @@ public class LogginAspect {
 ```
 
 - Obtains the name and parameters of the intercepted method
-- Logs the name and parameters of the intercepted method
+- Logs the name and parameters of the intercepted method 
 - Calls the intercepted method
 - Returns the value returned by the intercepted method
 
+
 ### Visualization of Aspect interception
 
-<img src="./images/aspect-joinpoint.png" width="750"/>
+
+<img src="./images/aspect-joinpoint.png" width="600"/>
 
 The aspect intercepts the method call, so it can access the parameters and the value returned by the intercepted method after execution.
 
-For the main() method, it looks like it directly calls the publishComment() method of the CommentService bean.
+For the main() method, it looks like it directly calls the publishComment() method of the CommentService bean. 
 
 The caller isn’t aware that an aspect intercepted the call.
 
----
 
-### Altering the parameters and the returned value
+----
+
 
 Aspects are even more powerful. They can alter the execution of the intercepted method by
 
-- Changing the value of the parameters sent to the method
+- Changing the value of the parameters sent to the method 
 - Changing the returned value received by the caller
 - Throwing an exception to the caller or catching and treating an exception thrown by the intercepted method
-
-```java
-@Aspect
-public class LogginAspect {
-
-	private Logger logger = Logger.getLogger(LogginAspect.class.getName());
-	@Around("execution(* com.isaachome.services.*.*(..))")
-	public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
-		String methodName = joinPoint.getSignature().getName();
-		Object [] arguments = joinPoint.getArgs();
-
-		logger.info("Method " + methodName +
-				" with parameters " + Arrays.asList(arguments)
-				+ " will execute.");
-		Comment comment = new Comment();
-		comment.setAuthor("IsaacHome");
-		comment.setText("Intercepted Comment...");
-		Object [] newArguments = {comment};
-
-		Object returnByMethod =joinPoint.proceed(newArguments);
-
-		logger.info("Method  executed and returned " + returnByMethod);
-		return "FAILED";
-	}
-}
-```
-
-- We send a different comment instance as a value to the method’s parameter.
-- We log the value returned by the intercepted method, but we return a different value to the caller.
-
----
-
-## Intercepting annotated methods
-
-Define a custom annotation and log only the execution of the methods using the custom annotation.
-
-To achieve this objective, you need to do the following:
-
-1. Define a custom annotation, and make it accessible at runtime. We’ll call this annotation `@ToLog`.
-
-2. Use a different AspectJ pointcut expression for the aspect method to tell the aspect to intercept the methods annotated with the custom annotation.
-
-### Custom annotation
-
-```java
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface ToLog {}
-```
-
-- Enables the annotation to be intercepted at runtime
-- Restricts this annotation to only be used with methods
-
-### We use the custom annotation for the methods we want the aspect to intercept
-
-```java
-
-@Service
-public class CommentService {
-	private Logger logger = Logger.getLogger(CommentService.class.getName());
-	public void pushComment(Comment comment) {
-		logger.info("Publishing comment : " + comment.getText());
-	}
-
-	@ToLog
-	public void deleteComment(Comment comment) {
-		logger.info("Deleting comment : " + comment.getText());
-	}
-	public void editingComment(Comment comment) {
-		logger.info("Editing comment : " + comment.getText());
-	}
-}
-
-```
-
-### Weaving the aspect to the methods annotated with `@ToLog`
-
-```java
-@Aspect
-public class LoggingAspect {
-private Logger logger = Logger.getLogger(LoggingAspect.class.getName());
-@Around("@annotation(ToLog)")
-	public Object log(ProceedingJoinPoint joinPoint)throws Throwable {
-		String methodName = joinPoint.getSignature().getName();
-		Object [] arguments = joinPoint.getArgs();
-
-		logger.info("Method " + methodName +
-				" with parameters " + Arrays.asList(arguments)
-				+ " will execute.");
-
-		Object returnByMethod =joinPoint.proceed();
-
-		logger.info("Method  executed and returned " + returnByMethod);
-		return returnByMethod;
-	}
-}
-```
-
----
-
-### Other advice annotations you can use
-
-Other than `@Around`, Spring offers the following advice annotations:
-
-- `@Before`
-  - Calls the method defining the aspect logic before the execution of the intercepted method.
-
-- `@AfterReturning`
-	- Calls the method defining the aspect logic after the method successfully returns, and provides the returned value as a parameter to the aspect method. The aspect method isn’t called if the intercepted method throws an exception.
-
-- `@AfterThrowing`
-	- Calls the method defining the aspect logic if the intercepted method throws an exception, and provides the exception instance as a parameter to the aspect method.
-
-- `@After`
-	- Calls the method defining the aspect logic only after the intercepted method execution, whether the method successfully returned or threw an exception.
-
-
----
-
-### The aspect execution chain

@@ -7,6 +7,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
+import com.isaachome.model.Comment;
+
 @Aspect
 public class LogginAspect {
 	
@@ -19,10 +21,14 @@ public class LogginAspect {
 		logger.info("Method " + methodName + 
 				" with parameters " + Arrays.asList(arguments)
 				+ " will execute.");
+		Comment comment = new Comment();
+		comment.setAuthor("IsaacHome");
+		comment.setText("Intercepted Comment...");
+		Object [] newArguments = {comment};
 		
-		Object returnByMethod =joinPoint.proceed();
+		Object returnByMethod =joinPoint.proceed(newArguments);
 		
 		logger.info("Method  executed and returned " + returnByMethod);
-		return returnByMethod;
+		return "FAILED";
 	}
 }

@@ -7,12 +7,15 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
+import com.isaachome.model.Comment;
+
 @Aspect
 public class LogginAspect {
 	
 	private Logger logger = Logger.getLogger(LogginAspect.class.getName());
-	@Around("execution(* com.isaachome.services.*.*(..))")
-	public Object log(ProceedingJoinPoint joinPoint) throws Throwable {
+	
+	@Around("@annotation(ToLog)")
+	public Object log(ProceedingJoinPoint joinPoint)throws Throwable {
 		String methodName = joinPoint.getSignature().getName();
 		Object [] arguments = joinPoint.getArgs();
 		
